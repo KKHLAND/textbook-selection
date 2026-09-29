@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>검·인정도서 선정 평가표</title>
+<title>검·인정도서 선정 평가표 생성기</title>
 <meta name="description" content="검·인정도서 선정 평가표 및 집계표 작성, 인쇄, HWPX 및 PDF 다운로드 웹 애플리케이션">
-<meta property="og:title" content="검·인정도서 선정 평가표">
+<meta property="og:title" content="검·인정도서 선정 평가표 생성기">
 <meta property="og:description" content="검·인정도서 선정 평가표 및 집계표 작성, 인쇄, HWPX 및 PDF 다운로드 웹 애플리케이션">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -45,27 +45,44 @@ button,input,select,textarea{font:inherit;color:inherit}
 :focus-visible{outline:2px solid var(--blue);outline-offset:2px}
 
 /* ---------- top bar ---------- */
-.top{display:flex;align-items:center;gap:20px;flex-wrap:wrap;padding:14px 24px;background:var(--panel);border-bottom:1px solid var(--rule);position:sticky;top:env(safe-area-inset-top,0px);z-index:20}
-.brand{display:flex;align-items:center;gap:12px;margin-right:auto}
-.brand-seal{width:34px;height:34px;border:2px solid var(--seal);border-radius:6px;color:var(--seal);display:grid;place-items:center;font:700 13px/1 'Nanum Myeongjo',serif;transform:rotate(-6deg)}
-.brand h1{font-size:17px;font-weight:600;margin:0;letter-spacing:-.01em}
-.brand small{display:block;color:var(--muted);font-size:12.5px;font-weight:400}
-.tabs{display:flex;background:var(--soft);border:1px solid var(--rule);border-radius:9px;padding:3px}
-.tabs button{border:0;background:transparent;padding:7px 14px;border-radius:7px;cursor:pointer;color:var(--muted);font-weight:500;font-size:14px}
-.tabs button[aria-selected="true"]{background:var(--panel);color:var(--ink);box-shadow:0 1px 2px rgba(20,30,50,.12)}
-.linkbtn{border:0;background:none;color:var(--blue);cursor:pointer;font-size:13.5px;padding:4px 0;text-decoration:underline;text-underline-offset:3px}
+.top{display:grid;grid-template-columns:1fr auto auto auto;grid-template-rows:1fr auto;min-height:166px;padding:20px 32px 18px;gap:12px 14px;background:var(--panel);border-bottom:1px solid var(--rule);position:sticky;top:env(safe-area-inset-top,0px);z-index:20}
+.brand{grid-column:1/2;grid-row:1/3;align-self:center;display:flex;align-items:center;gap:18px}
+.brand-seal{width:51px;height:51px;background:#DC2626;border:2.5px solid #EF4444;box-shadow:inset 0 0 0 2px rgba(255,255,255,.88),0 3px 10px rgba(0,0,0,.32);border-radius:6px;color:#fff;display:grid;place-items:center;font:900 25.5px/1 'Nanum Myeongjo','Batang',serif;transform:rotate(-5deg);cursor:default;user-select:none;flex-shrink:0;transition:transform .2s ease,box-shadow .2s ease}
+.brand-seal:hover{transform:rotate(0deg) scale(1.07);box-shadow:inset 0 0 0 2px rgba(255,255,255,.95),0 5px 14px rgba(0,0,0,.38)}
+.brand h1{font-size:28.5px;font-weight:700;margin:0;letter-spacing:-.015em;line-height:1.25}
+.brand small{display:flex;align-items:center;flex-wrap:wrap;color:var(--muted);font-size:15.5px;font-weight:400;margin-top:5px}
+.year-wrap{display:inline-flex;align-items:center}
+.year-input{width:66px;height:27px;padding:0 4px;margin-right:5px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);border-radius:6px;color:#fff;font-family:inherit;font-size:15.5px;font-weight:700;text-align:center;line-height:27px;transition:all .15s ease;-moz-appearance:textfield}
+.year-input::-webkit-outer-spin-button,.year-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.year-input:hover{background:rgba(255,255,255,.28);border-color:rgba(255,255,255,.55)}
+.year-input:focus{background:#fff;color:var(--head,#2A4F8A);border-color:#fff;outline:none;box-shadow:0 0 0 2px rgba(255,255,255,.45)}
+.year-label{font-size:15.5px}
+.brand-list-info{margin-left:7px;font-size:13.5px;opacity:.85}
+.tabs{grid-column:2/3;grid-row:2;justify-self:end;align-self:end;display:flex;gap:8px;background:none;border:none;padding:0;margin-bottom:2px}
+.tabs button{height:34px;padding:0 14px;border-radius:8px;cursor:pointer;font-weight:600;font-size:13px;display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;transition:all .15s ease;white-space:nowrap;border:1px solid transparent;line-height:32px}
+#tab-eval{background:rgba(224,242,254,.32);color:#E0F2FE;border-color:rgba(186,230,253,.55)}
+#tab-eval:hover{background:rgba(224,242,254,.52);color:#fff;border-color:rgba(186,230,253,.85)}
+#tab-eval[aria-selected="true"]{background:#E0F2FE;color:#0369A1;border-color:#BAE6FD;box-shadow:0 1px 3px rgba(3,105,161,.2);font-weight:700}
+#tab-agg{background:rgba(243,232,255,.32);color:#F3E8FF;border-color:rgba(221,214,254,.55)}
+#tab-agg:hover{background:rgba(243,232,255,.52);color:#fff;border-color:rgba(221,214,254,.85)}
+#tab-agg[aria-selected="true"]{background:#F3E8FF;color:#6B21A8;border-color:#DDD6FE;box-shadow:0 1px 3px rgba(107,33,168,.2);font-weight:700}
+#btn-list{grid-column:3/4;grid-row:2;justify-self:end;align-self:end;margin-bottom:2px;height:34px;padding:0 14px;border-radius:8px;cursor:pointer;font-weight:600;font-size:13px;display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;transition:all .15s ease;white-space:nowrap;text-decoration:none;border:1px solid #FDE68A;background:#FEF3C7;color:#92400E;box-shadow:0 1px 3px rgba(146,64,14,.12);line-height:32px}
+#btn-list:hover{background:#FDE68A;color:#78350F;border-color:#FCD34D}
+#btn-sample{grid-column:4/5;grid-row:2;justify-self:end;align-self:end;margin-bottom:2px;height:34px;padding:0 14px;border-radius:8px;cursor:pointer;font-weight:600;font-size:13px;display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;transition:all .15s ease;white-space:nowrap;text-decoration:none;border:1px solid #A7F3D0;background:#D1FAE5;color:#065F46;box-shadow:0 1px 3px rgba(6,95,70,.12);line-height:32px}
+#btn-sample:hover{background:#A7F3D0;color:#047857;border-color:#6EE7B7}
+@media (max-width:850px){.top{grid-template-columns:1fr;grid-template-rows:auto auto auto auto;gap:10px;padding:14px 18px 12px}.brand{grid-column:1;grid-row:1;align-self:start}.tabs{grid-column:1;grid-row:2;justify-self:start}#btn-list{grid-column:1;grid-row:3;justify-self:start}#btn-sample{grid-column:1;grid-row:4;justify-self:start;margin-bottom:0}}
 
 /* ---------- layout ---------- */
-.work{display:grid;grid-template-columns:minmax(360px,470px) minmax(0,1fr);min-height:calc(100% - 64px)}
+.work{display:grid;grid-template-columns:minmax(360px,470px) minmax(0,1fr);min-height:calc(100% - 166px)}
 .ctrl{min-width:0;background:var(--panel);border-right:1px solid var(--rule);padding:8px 0 120px}
 .view{padding:22px 26px 60px;min-width:0}
 @media (max-width:900px){.work{grid-template-columns:minmax(0,1fr)}.ctrl{border-right:0;border-bottom:1px solid var(--rule);padding-bottom:24px}.view{padding:16px}}
 
 .step{padding:18px 24px 20px;border-bottom:1px solid var(--rule)}
 .step:last-of-type{border-bottom:0}
-.step h2{display:flex;align-items:baseline;gap:10px;font-size:15.5px;font-weight:600;margin:0 0 12px}
-.step h2 .n{font:700 13px/1 var(--ui);color:var(--muted);min-width:18px}
-.step h2 .aside{margin-left:auto;font-size:12.5px;font-weight:400;color:var(--muted)}
+.step h2{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:700;margin:0 0 14px;padding:9px 14px;background:var(--blue-soft);border:1px solid rgba(42,79,138,.14);border-radius:8px;color:var(--head,#2A4F8A)}
+.step h2 .n{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:6px;background:var(--blue);color:#fff;font:700 13px/1 var(--ui);min-width:24px}
+.step h2 .aside{margin-left:auto;font-size:13px;font-weight:500;color:var(--muted)}
 .hint{color:var(--muted);font-size:13px;margin:6px 0 0}
 .row{display:flex;gap:10px;flex-wrap:wrap}
 .field{display:flex;flex-direction:column;gap:4px;flex:1;min-width:120px}
@@ -126,18 +143,30 @@ table.sg{border-collapse:collapse;font-size:13px;min-width:100%}
 /* ---------- buttons ---------- */
 .btn{border:1px solid var(--rule);background:var(--panel);border-radius:8px;padding:9px 14px;cursor:pointer;font-weight:500;font-size:14px;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
 .btn:hover{border-color:var(--muted)}
-.btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}
-:root[data-theme="dark"] .btn.primary{color:#0E1520}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .btn.primary{color:#0E1520}}
+.btn.primary{background:#4577BC;border-color:#3A6CB0;color:#fff;box-shadow:0 1px 3px rgba(69,119,188,.2);transition:all .15s ease}
+.btn.primary:hover{background:#3869AA;border-color:#2F5C99;box-shadow:0 2px 6px rgba(69,119,188,.3)}
+.btn.primary:active{background:#2F578F;border-color:#26497B}
+:root[data-theme="dark"] .btn.primary{background:#4C7DBE;border-color:#3E6EB0;color:#fff}
+:root[data-theme="dark"] .btn.primary:hover{background:#598CCE;border-color:#4C7DBE}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .btn.primary{background:#4C7DBE;border-color:#3E6EB0;color:#fff}
+  :root:not([data-theme="light"]) .btn.primary:hover{background:#598CCE;border-color:#4C7DBE}
+}
 .btn:disabled{opacity:.45;cursor:not-allowed}
 .btn.sm{padding:6px 10px;font-size:13px}
-.btn.green, .dlrow .btn{background:#25784A;border-color:#25784A;color:#fff;font-weight:500;transition:all .15s ease}
-.btn.green:hover, .dlrow .btn:hover{background:#1D633C;border-color:#1D633C;color:#fff}
-:root[data-theme="dark"] .btn.green, :root[data-theme="dark"] .dlrow .btn{background:#2B8652;border-color:#2B8652;color:#fff}
-:root[data-theme="dark"] .btn.green:hover, :root[data-theme="dark"] .dlrow .btn:hover{background:#35A364;border-color:#35A364;color:#fff}
+.btn-hwpx, .btn[data-act="hwpx"]{background:#48BB78;border-color:#3EA368;color:#fff;font-weight:500;transition:all .15s ease}
+.btn-hwpx:hover, .btn[data-act="hwpx"]:hover{background:#38A169;border-color:#2F855A;color:#fff}
+.btn-pdf, .btn[data-act="pdf"]{background:#F06A25;border-color:#E05C17;color:#fff;font-weight:500;transition:all .15s ease}
+.btn-pdf:hover, .btn[data-act="pdf"]:hover{background:#D9530F;border-color:#C84707;color:#fff}
+:root[data-theme="dark"] .btn-hwpx, :root[data-theme="dark"] .btn[data-act="hwpx"]{background:#38A169;border-color:#38A169;color:#fff}
+:root[data-theme="dark"] .btn-hwpx:hover, :root[data-theme="dark"] .btn[data-act="hwpx"]:hover{background:#48BB78;border-color:#48BB78;color:#fff}
+:root[data-theme="dark"] .btn-pdf, :root[data-theme="dark"] .btn[data-act="pdf"]{background:#EA580C;border-color:#EA580C;color:#fff}
+:root[data-theme="dark"] .btn-pdf:hover, :root[data-theme="dark"] .btn[data-act="pdf"]:hover{background:#F97316;border-color:#F97316;color:#fff}
 @media (prefers-color-scheme:dark){
-  :root:not([data-theme="light"]) .btn.green, :root:not([data-theme="light"]) .dlrow .btn{background:#2B8652;border-color:#2B8652;color:#fff}
-  :root:not([data-theme="light"]) .btn.green:hover, :root:not([data-theme="light"]) .dlrow .btn:hover{background:#35A364;border-color:#35A364;color:#fff}
+  :root:not([data-theme="light"]) .btn-hwpx, :root:not([data-theme="light"]) .btn[data-act="hwpx"]{background:#38A169;border-color:#38A169;color:#fff}
+  :root:not([data-theme="light"]) .btn-hwpx:hover, :root:not([data-theme="light"]) .btn[data-act="hwpx"]:hover{background:#48BB78;border-color:#48BB78;color:#fff}
+  :root:not([data-theme="light"]) .btn-pdf, :root:not([data-theme="light"]) .btn[data-act="pdf"]{background:#EA580C;border-color:#EA580C;color:#fff}
+  :root:not([data-theme="light"]) .btn-pdf:hover, :root:not([data-theme="light"]) .btn[data-act="pdf"]:hover{background:#F97316;border-color:#F97316;color:#fff}
 }
 .actions{position:sticky;bottom:0;background:var(--panel);border-top:1px solid var(--rule);padding:14px 24px calc(14px + env(safe-area-inset-bottom,0px));display:grid;grid-template-columns:1fr 1fr;gap:8px;z-index:5}
 .dlrow{grid-column:1/-1;display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
@@ -227,29 +256,35 @@ table.sg{border-collapse:collapse;font-size:13px;min-width:100%}
 :root{--head:#2A4F8A;--head-line:#22416F}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--head:#1F3A63;--head-line:#182E4F}}
 :root[data-theme="dark"]{--head:#1F3A63;--head-line:#182E4F}
-.top{background:var(--head);border-bottom-color:var(--head-line);color:#fff}
+.top{background:linear-gradient(180deg,rgba(255,255,255,.16) 0%,rgba(255,255,255,0) 55%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#315B94 0%,#3C6BB0 45%,#487CC8 75%,#3A6AA9 100%);border-bottom:1px solid #285085;box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 3px 14px rgba(25,55,95,.14);color:#fff}
 .top :focus-visible{outline-color:#fff}
-.brand small{color:rgba(255,255,255,.72)}
-.brand-seal{border-color:#fff;color:#fff}
-.top .tabs{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22)}
-.top .tabs button{color:rgba(255,255,255,.8)}
-.top .tabs button:hover{color:#fff}
-.top .tabs button[aria-selected="true"]{background:#fff;color:var(--head);box-shadow:none}
-.top .linkbtn{color:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .top{background:linear-gradient(180deg,rgba(255,255,255,.1) 0%,rgba(255,255,255,0) 55%,rgba(0,0,0,.15) 100%),linear-gradient(135deg,#1E3A63 0%,#26487A 45%,#2F5894 75%,#244575 100%);border-bottom:1px solid #162B4A;box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 4px 18px rgba(0,0,0,.35)}}
+:root[data-theme="dark"] .top{background:linear-gradient(180deg,rgba(255,255,255,.1) 0%,rgba(255,255,255,0) 55%,rgba(0,0,0,.15) 100%),linear-gradient(135deg,#1E3A63 0%,#26487A 45%,#2F5894 75%,#244575 100%);border-bottom:1px solid #162B4A;box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 4px 18px rgba(0,0,0,.35)}
+.brand small{color:rgba(255,255,255,.76)}
 </style>
 <style id="page-style">@page{size:A4 landscape;margin:0}</style>
 </head>
 <body>
 <header class="top">
   <div class="brand">
-    <div class="brand-seal" aria-hidden="true">選</div>
-    <div><h1>검·인정도서 선정 평가표</h1><small id="brand-sub">2027학년도 교과서 선정</small></div>
+    <div class="brand-seal" aria-hidden="true" title="선정 직인">選</div>
+    <div>
+      <h1>검·인정도서 선정 평가표 생성기</h1>
+      <small id="brand-sub">
+        <span class="year-wrap">
+          <input type="number" id="input-year" class="year-input" min="2020" max="2050" value="2027" aria-label="학년도 입력" title="클릭하여 학년도 수정">
+          <span class="year-label">학년도 교과서 선정</span>
+        </span>
+        <span id="brand-list-info" class="brand-list-info"></span>
+      </small>
+    </div>
   </div>
   <nav class="tabs" role="tablist" aria-label="작업 선택">
     <button role="tab" id="tab-eval" aria-selected="true">위원 평가표 작성</button>
     <button role="tab" id="tab-agg" aria-selected="false">교과 총괄표 만들기</button>
   </nav>
   <button class="linkbtn" id="btn-list">교과서 목록 바꾸기</button>
+  <button class="linkbtn sample" id="btn-sample" title="교과서 목록 엑셀 샘플 양식 다운로드">샘플 양식 다운로드 (xlsx)</button>
   <input type="file" id="list-file" accept=".xlsx,.xlsm,.xls" hidden>
 </header>
 
@@ -304,10 +339,10 @@ table.sg{border-collapse:collapse;font-size:13px;min-width:100%}
       <button class="btn primary" data-act="print" data-form="1">서식1 평가표 인쇄</button>
       <button class="btn primary" data-act="print" data-form="3">서식3 의견서 인쇄</button>
       <div class="dlrow" role="group" aria-label="파일로 받기">
-        <button class="btn green" data-act="hwpx" data-form="1">서식1 hwpx</button>
-        <button class="btn green" data-act="hwpx" data-form="3">서식3 hwpx</button>
-        <button class="btn green" data-act="pdf" data-form="1">서식1 PDF</button>
-        <button class="btn green" data-act="pdf" data-form="3">서식3 PDF</button>
+        <button class="btn btn-hwpx" data-act="hwpx" data-form="1">서식1 hwpx</button>
+        <button class="btn btn-hwpx" data-act="hwpx" data-form="3">서식3 hwpx</button>
+        <button class="btn btn-pdf" data-act="pdf" data-form="1">서식1 PDF</button>
+        <button class="btn btn-pdf" data-act="pdf" data-form="3">서식3 PDF</button>
       </div>
       <p class="dlnote" data-dlnote hidden>이 화면에서는 hwpx가 zip으로 묶여 저장됩니다. 압축을 풀면 hwpx 파일이 나옵니다.</p>
     </div>
@@ -364,10 +399,10 @@ table.sg{border-collapse:collapse;font-size:13px;min-width:100%}
       <button class="btn primary" data-act="print" data-form="2">서식2 총괄표 인쇄</button>
       <button class="btn primary" data-act="print" data-form="3">서식3 의견서 인쇄</button>
       <div class="dlrow" role="group" aria-label="파일로 받기">
-        <button class="btn green" data-act="hwpx" data-form="2">서식2 hwpx</button>
-        <button class="btn green" data-act="hwpx" data-form="3">서식3 hwpx</button>
-        <button class="btn green" data-act="pdf" data-form="2">서식2 PDF</button>
-        <button class="btn green" data-act="pdf" data-form="3">서식3 PDF</button>
+        <button class="btn btn-hwpx" data-act="hwpx" data-form="2">서식2 hwpx</button>
+        <button class="btn btn-hwpx" data-act="hwpx" data-form="3">서식3 hwpx</button>
+        <button class="btn btn-pdf" data-act="pdf" data-form="2">서식2 PDF</button>
+        <button class="btn btn-pdf" data-act="pdf" data-form="3">서식3 PDF</button>
       </div>
       <p class="dlnote" data-dlnote hidden>이 화면에서는 hwpx가 zip으로 묶여 저장됩니다. 압축을 풀면 hwpx 파일이 나옵니다.</p>
     </div>
@@ -807,6 +842,21 @@ const store = {
   get(k, d) { try { const v = localStorage.getItem('tbsel.' + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
   set(k, v) { try { localStorage.setItem('tbsel.' + k, JSON.stringify(v)); } catch (e) { /* ignore */ } },
 };
+function getSchoolYear() {
+  const inp = $('#input-year');
+  return inp && inp.value.trim() ? inp.value.trim() : store.get('school_year', '2027');
+}
+function setSchoolYear(y) {
+  const clean = String(y || '').trim() || '2027';
+  store.set('school_year', clean);
+  const inp = $('#input-year');
+  if (inp && inp.value !== clean) inp.value = clean;
+  document.title = `${clean}학년도 검·인정도서 선정 평가표 생성기`;
+}
+function updateBrandListInfo(text) {
+  const el = $('#brand-list-info');
+  if (el) el.textContent = text ? `(${text})` : '';
+}
 function getPriceFor(subjectName, pubName) {
   if (!subjectName || !pubName) return '';
   const entry = SUBJECTS.find(s => norm(s.name) === norm(subjectName));
@@ -1250,10 +1300,11 @@ async function doHwpx(k, form) {
   if (!ready(k, form)) return;
   try {
     let blob, name;
-    if (k === 'e' && form === '1') { blob = await HWPX.buildForm1(b64(TPL[1]), form1Data(), 'blob'); name = `서식1_평가표_${safe(S.e.subject)}_${safe(S.e.teacher)}.hwpx`; }
-    else if (k === 'e') { blob = await HWPX.buildForm3(b64(TPL[3]), form3DataE(), 'blob'); name = `서식3_추천의견서_${safe(S.e.subject)}_${safe(S.e.teacher)}.hwpx`; }
-    else if (form === '2') { const d = form2Data(); blob = await HWPX.buildForm2(b64(TPL[2]), d, 'blob'); name = `서식2_총괄표_${safe(d.subject)}.hwpx`; }
-    else { const d = form3DataA(); blob = await HWPX.buildForm3(b64(TPL[3]), d, 'blob'); name = `서식3_추천의견서_${safe(d.subject)}.hwpx`; }
+    const yr = getSchoolYear();
+    if (k === 'e' && form === '1') { blob = await HWPX.buildForm1(b64(TPL[1]), form1Data(), 'blob'); name = `${yr}학년도_서식1_평가표_${safe(S.e.subject)}_${safe(S.e.teacher)}.hwpx`; }
+    else if (k === 'e') { blob = await HWPX.buildForm3(b64(TPL[3]), form3DataE(), 'blob'); name = `${yr}학년도_서식3_추천의견서_${safe(S.e.subject)}_${safe(S.e.teacher)}.hwpx`; }
+    else if (form === '2') { const d = form2Data(); blob = await HWPX.buildForm2(b64(TPL[2]), d, 'blob'); name = `${yr}학년도_서식2_총괄표_${safe(d.subject)}.hwpx`; }
+    else { const d = form3DataA(); blob = await HWPX.buildForm3(b64(TPL[3]), d, 'blob'); name = `${yr}학년도_서식3_추천의견서_${safe(d.subject)}.hwpx`; }
     await saveBlob(name, blob);
   } catch (err) { console.error(err); toast('hwpx 파일을 만들지 못했습니다: ' + err.message); }
 }
@@ -1277,7 +1328,8 @@ async function doPdf(k, form) {
     const subj = k === 'e' ? S.e.subject : aggData().subject;
     const who = k === 'e' ? '_' + safe(S.e.teacher) : '';
     const label = { 1: '서식1_평가표', 2: '서식2_총괄표', 3: '서식3_추천의견서' }[form];
-    await saveBlob(`${label}_${safe(subj)}${who}.pdf`, pdf.output('blob'));
+    const yr = getSchoolYear();
+    await saveBlob(`${yr}학년도_${label}_${safe(subj)}${who}.pdf`, pdf.output('blob'));
   } catch (err) { console.error(err); toast('PDF를 만들지 못했습니다: ' + err.message); }
 }
 
@@ -1391,6 +1443,23 @@ drop.addEventListener('keydown', ev => { if (ev.key === 'Enter' || ev.key === ' 
 drop.addEventListener('drop', ev => addFiles(Array.from(ev.dataTransfer.files)));
 $('#a-files').addEventListener('click', ev => { const b = ev.target.closest('[data-rm]'); if (!b) return; S.a.files.splice(+b.dataset.rm, 1); S.a.ops = {}; renderAgg(); });
 
+/* 학년도 설정 */
+const yearInput = $('#input-year');
+if (yearInput) {
+  yearInput.value = store.get('school_year', '2027');
+  yearInput.oninput = () => {
+    const val = yearInput.value.trim();
+    if (val.length >= 4) {
+      setSchoolYear(val);
+    }
+  };
+  yearInput.onchange = () => {
+    const val = yearInput.value.trim() || '2027';
+    setSchoolYear(val);
+    toast(`선정 학년도를 ${getSchoolYear()}학년도로 변경했습니다.`);
+  };
+}
+
 /* 교과서 목록 바꾸기 (xlsx) */
 $('#btn-list').onclick = () => $('#list-file').click();
 $('#list-file').onchange = async ev => {
@@ -1401,6 +1470,11 @@ $('#list-file').onchange = async ev => {
     let found = null;
     for (const name of wb.SheetNames) {
       const rows = window.XLSX.utils.sheet_to_json(wb.Sheets[name], { header: 1, raw: false, defval: '' });
+      const firstStr = (rows[0] || []).join(' ');
+      const m = firstStr.match(/(\d{4})\s*학년도/);
+      if (m) {
+        setSchoolYear(m[1]);
+      }
       const hr = rows.findIndex(r => r.some(c => norm(c) === '교과서명'));
       if (hr < 0) continue;
       const nc = rows[hr].findIndex(c => norm(c) === '교과서명');
@@ -1434,11 +1508,59 @@ $('#list-file').onchange = async ev => {
     SUBJECTS = found; store.set('subjects', found);
     S.e.subject = ''; S.e.pubs = []; S.e.scores = null; S.e.rank1 = null;
     renderSubjects(); renderEval();
-    $('#brand-sub').textContent = `불러온 목록 · ${found.length}과목`;
+    updateBrandListInfo(`불러온 목록 · ${found.length}과목`);
     toast(`교과서 목록을 바꿨습니다 (${found.length}과목).`);
   } catch (err) { toast('목록을 읽지 못했습니다: ' + err.message); }
 };
-if (customList) $('#brand-sub').textContent = `불러온 목록 · ${SUBJECTS.length}과목`;
+
+/* 교과서 목록 샘플 양식 엑셀 다운로드 */
+$('#btn-sample').onclick = async () => {
+  try {
+    toast('샘플 양식을 생성하는 중입니다…');
+    await loadScript('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js');
+    const year = getSchoolYear();
+    const title = `${year}학년도 사용 교과서 목록 (출판사 및 저자 포함)`;
+    const headerRow = ['번호', '교과서명', '전시권수'];
+    for (let k = 1; k <= 10; k++) {
+      headerRow.push(String(k), '가격');
+    }
+    const rows = [
+      [title],
+      [],
+      headerRow
+    ];
+    SUBJECTS.forEach((s, idx) => {
+      const r = [idx + 1, s.name, s.pubs.length];
+      for (let k = 0; k < 10; k++) {
+        if (k < s.pubs.length) {
+          const pub = s.pubs[k];
+          const price = (s.prices && s.prices[pub]) || getPriceFor(s.name, pub) || '';
+          r.push(pub, price);
+        } else {
+          r.push('', '');
+        }
+      }
+      rows.push(r);
+    });
+    const ws = window.XLSX.utils.aoa_to_sheet(rows);
+    ws['!cols'] = [
+      { wch: 6 },
+      { wch: 22 },
+      { wch: 9 },
+      ...Array(10).fill([{ wch: 18 }, { wch: 10 }]).flat()
+    ];
+    const wb = window.XLSX.utils.book_new();
+    window.XLSX.utils.book_append_sheet(wb, ws, `${year}학년도_교과서목록`);
+    window.XLSX.writeFile(wb, `${year}학년도_사용_교과서_목록(샘플).xlsx`);
+    toast(`${year}학년도 교과서 목록 엑셀 샘플 양식을 다운로드했습니다.`);
+  } catch (err) {
+    console.error(err);
+    toast('샘플 양식을 생성하지 못했습니다: ' + err.message);
+  }
+};
+
+if (customList) updateBrandListInfo(`불러온 목록 · ${SUBJECTS.length}과목`);
+setSchoolYear(store.get('school_year', '2027'));
 
 renderSubjects();
 renderEval();
