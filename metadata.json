@@ -1,0 +1,8 @@
+{
+  "name": "검·인정도서 선정 평가표",
+  "description": "검·인정도서 선정 평가표 및 집계표 작성, 인쇄, HWPX 및 PDF 다운로드 웹 애플리케이션",
+  "permissions": [],
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

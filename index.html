@@ -4,6 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>검·인정도서 선정 평가표</title>
+<meta name="description" content="검·인정도서 선정 평가표 및 집계표 작성, 인쇄, HWPX 및 PDF 다운로드 웹 애플리케이션">
+<meta property="og:title" content="검·인정도서 선정 평가표">
+<meta property="og:description" content="검·인정도서 선정 평가표 및 집계표 작성, 인쇄, HWPX 및 PDF 다운로드 웹 애플리케이션">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=Nanum+Gothic:wght@400;700;800&family=Nanum+Myeongjo:wght@700;800&display=swap" rel="stylesheet">
@@ -136,11 +139,17 @@ table.sg{border-collapse:collapse;font-size:13px;min-width:100%}
 
 /* ---------- preview ---------- */
 .vtabs{display:flex;gap:6px;margin-bottom:14px;align-items:center;flex-wrap:wrap}
-.vtabs button{border:1px solid var(--rule);background:var(--panel);border-radius:7px;padding:6px 12px;cursor:pointer;font-size:13.5px;color:var(--muted)}
-.vtabs button[aria-selected="true"]{border-color:var(--ink);color:var(--ink);font-weight:500}
+.vtabs button{border:1px solid var(--rule);background:var(--panel);border-radius:7px;padding:6px 12px;cursor:pointer;font-size:13.5px;color:var(--muted);transition:all .15s}
+.vtabs button:hover{border-color:var(--muted);color:var(--ink)}
+.vtabs button[aria-selected="true"]{border-color:var(--blue);background:var(--blue-soft);color:var(--blue);font-weight:600}
 .vtabs .sp{margin-left:auto;font-size:12.5px;color:var(--muted)}
 .stage{position:relative;overflow:hidden}
 .stage .scaler{transform-origin:top left;box-shadow:0 1px 3px rgba(20,30,50,.18),0 10px 30px rgba(20,30,50,.10)}
+.stage .scaler.unselected{box-shadow:none}
+.empty-preview{border:1.5px dashed var(--rule);border-radius:12px;padding:60px 24px;text-align:center;background:var(--panel);color:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:380px}
+.empty-preview .empty-icon{font-size:48px;margin-bottom:14px;line-height:1}
+.empty-preview h3{font-size:17px;font-weight:600;margin:0 0 8px;color:var(--ink)}
+.empty-preview p{font-size:14px;color:var(--muted);margin:0 0 20px;max-width:380px;line-height:1.6}
 
 /* ---------- upload ---------- */
 .drop{display:block;border:1.5px dashed var(--rule);border-radius:10px;padding:22px 16px;text-align:center;cursor:pointer;background:var(--soft)}
@@ -297,8 +306,9 @@ table.sg{border-collapse:collapse;font-size:13px;min-width:100%}
   </section>
   <section class="view">
     <div class="vtabs" role="tablist" aria-label="미리보기">
-      <button role="tab" data-view="1" aria-selected="true">서식1 평가표</button>
+      <button role="tab" data-view="1" aria-selected="false">서식1 평가표</button>
       <button role="tab" data-view="3" aria-selected="false">서식3 추천 의견서</button>
+      <button type="button" class="linkbtn" data-close-view="e" style="display:none;margin-left:6px;font-size:12.5px;text-decoration:none">미리보기 닫기 ✕</button>
       <span class="sp">인쇄되는 모양 그대로 보입니다</span>
     </div>
     <div class="stage" id="e-stage"><div class="scaler" id="e-sheet"></div></div>
@@ -792,7 +802,7 @@ if (Array.isArray(customList) && customList.length) SUBJECTS = customList;
 const S = {
   tab: 'eval',
   e: { subject: '', teacher: store.get('teacher', ''), pubs: [], rank1: null, fix2: '', fix3: '', scores: null, ops: {}, prices: {},
-       w: store.get('e.w', { job: '교사', name: '' }), c: store.get('e.c', { job: '교사', name: '' }), view: '1', fresh: false },
+       w: store.get('e.w', { job: '교사', name: '' }), c: store.get('e.c', { job: '교사', name: '' }), view: null, fresh: false },
   a: { files: [], prices: {}, ops: {}, w: store.get('a.w', { job: '교사', name: '' }), c: store.get('a.c', { job: '교사', name: '' }), view: '2' },
 };
 
@@ -1091,7 +1101,24 @@ function sheetFor(k, form) {
 const MM = 96 / 25.4;
 function renderPreview(k) {
   const st = S[k], stage = $(`#${k}-stage`), box = $(`#${k}-sheet`);
-  $$(`#pane-${k === 'e' ? 'eval' : 'agg'} .vtabs button`).forEach(b => b.setAttribute('aria-selected', String(b.dataset.view === st.view)));
+  const closeBtn = $(`#pane-${k === 'e' ? 'eval' : 'agg'} [data-close-view]`);
+  if (closeBtn) closeBtn.style.display = st.view ? 'inline-block' : 'none';
+  $$(`#pane-${k === 'e' ? 'eval' : 'agg'} .vtabs button[data-view]`).forEach(b => b.setAttribute('aria-selected', String(b.dataset.view === st.view)));
+  if (!st.view) {
+    box.classList.add('unselected');
+    box.innerHTML = `
+      <div class="empty-preview">
+        <div class="empty-icon">📋</div>
+        <h3>서식1 평가표가 아직 열리지 않았습니다</h3>
+        <p>위쪽의 <strong>[서식1 평가표]</strong> 버튼을 누르면 평가표가 화면에 나타납니다.</p>
+        <button type="button" class="btn primary" id="${k}-open-form1-btn">서식1 평가표 보기</button>
+      </div>`;
+    const openBtn = box.querySelector(`#${k}-open-form1-btn`);
+    if (openBtn) openBtn.onclick = () => { st.view = '1'; renderPreview(k); };
+    fitStage(k);
+    return;
+  }
+  box.classList.remove('unselected');
   let html = sheetFor(k, st.view);
   if (!html) {
     // show blank form so users see what will be produced
@@ -1105,6 +1132,12 @@ function renderPreview(k) {
 function fitStage(k) {
   const stage = $(`#${k}-stage`), box = $(`#${k}-sheet`), sh = box.firstElementChild;
   if (!sh || !stage.clientWidth) return;
+  if (sh.classList.contains('empty-preview')) {
+    box.style.width = '100%';
+    box.style.transform = 'none';
+    stage.style.height = 'auto';
+    return;
+  }
   const land = sh.classList.contains('land');
   const w = (land ? 297 : 210) * MM, h = (land ? 210 : 297) * MM;
   const s = Math.min(1, stage.clientWidth / w);
@@ -1254,7 +1287,14 @@ function bindOps(k) {
     const sel = ev.target.closest('select[data-op="addsel"]'); if (!sel || !sel.value) return;
     const pub = sel.closest('.op').dataset.pub;
     let v = sel.value;
-    if (v === '__custom') { v = (prompt('추가할 의견을 입력하세요') || '').replace(/^[○\s]+/, '').trim(); if (!v) { sel.value = ''; return; } }
+    if (v === '__custom') {
+      try {
+        v = (prompt('추가할 의견을 입력하세요') || '').replace(/^[○\s]+/, '').trim();
+      } catch (e) {
+        v = '';
+      }
+      if (!v) { sel.value = ''; return; }
+    }
     (st.ops[pub] = st.ops[pub] || []).push(v);
     k === 'e' ? renderEval() : renderAgg();
   });
@@ -1279,6 +1319,9 @@ bindOps('e'); bindOps('a');
 });
 $$('.vtabs button[data-view]').forEach(b => b.addEventListener('click', () => {
   const k = b.closest('#pane-eval') ? 'e' : 'a'; S[k].view = b.dataset.view; renderPreview(k);
+}));
+$$('[data-close-view]').forEach(b => b.addEventListener('click', () => {
+  const k = b.dataset.closeView; S[k].view = null; renderPreview(k);
 }));
 
 /* upload */
