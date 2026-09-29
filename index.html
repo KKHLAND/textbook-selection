@@ -290,7 +290,7 @@ table.sg{border-collapse:collapse;font-size:13px;min-width:100%}
         <div class="field"><label for="e-cjob">확인자 직</label><input type="text" id="e-cjob"></div>
         <div class="field"><label for="e-cname">확인자 성명</label><input type="text" id="e-cname"></div>
       </div>
-      <p class="hint">작성자와 확인자는 달라야 합니다.</p>
+      <p class="hint">작성자는 교과협의회 대표교사, 확인자는 교감으로 함</p>
     </div>
     <div class="actions" id="e-actions">
       <button class="btn primary" data-act="print" data-form="1">서식1 평가표 인쇄</button>
@@ -350,7 +350,7 @@ table.sg{border-collapse:collapse;font-size:13px;min-width:100%}
         <div class="field"><label for="a-cjob">확인자 직</label><input type="text" id="a-cjob"></div>
         <div class="field"><label for="a-cname">확인자 성명</label><input type="text" id="a-cname"></div>
       </div>
-      <p class="hint">작성자는 교과협의회 소속 교사, 확인자는 교과협의회 대표 교사입니다.</p>
+      <p class="hint">※ 서식2 총괄표: 작성자는 교과협의회 소속교사, 확인자는 교과협의회 대표교사<br>※ 서식3 의견서: 작성자는 교과협의회 대표교사, 확인자는 교감으로 함</p>
     </div>
     <div class="actions" id="a-actions">
       <button class="btn primary" data-act="print" data-form="2">서식2 총괄표 인쇄</button>
@@ -656,6 +656,9 @@ const HWPX = (() => {
   async function buildForm3(tplBytes, d, outType) {
     // d: {subject, rows:[{pub, price, lines[]}] (max 3), writer, checker}
     const pkg = await openZip(tplBytes);
+    const secXml = td.decode(pkg.files['Contents/section0.xml'])
+      .replace('작성자는 교과협의회 소속교사, 확인자는 교과협의회 대표교사로 함', '작성자는 교과협의회 대표교사, 확인자는 교감으로 함');
+    pkg.files['Contents/section0.xml'] = te.encode(secXml);
     const sec = parseXml(pkg.files['Contents/section0.xml']);
     const root = sec.doc.documentElement;
     const paras = kids(root, 'p');
@@ -822,9 +825,10 @@ if (Array.isArray(customList) && customList.length && customList[0].prices) {
 const S = {
   tab: 'eval',
   e: { subject: '', teacher: store.get('teacher', ''), pubs: [], rank1: null, fix2: '', fix3: '', scores: null, ops: {}, prices: {},
-       w: store.get('e.w', { job: '교사', name: '' }), c: store.get('e.c', { job: '교사', name: '' }), view: null, fresh: false },
+       w: store.get('e.w', { job: '교사', name: '' }), c: store.get('e.c', { job: '교감', name: '' }), view: null, fresh: false },
   a: { files: [], prices: {}, ops: {}, w: store.get('a.w', { job: '교사', name: '' }), c: store.get('a.c', { job: '교사', name: '' }), view: '2' },
 };
+if (S.e.c && S.e.c.job === '교사' && !S.e.c.name) S.e.c.job = '교감';
 
 /* ---------- toast ---------- */
 let toastT;
@@ -1099,7 +1103,8 @@ function signText(d, lead) {
   return lead ? `교과협의회     ${f('작성자', d.writer)}\n                   ${f('확인자', d.checker)}`
     : `${f('작성자', d.writer)}\n${f('확인자', d.checker)}`;
 }
-const NOTE = '※ 작성자는 교과협의회 소속교사, 확인자는 교과협의회 대표교사로 함<br>※ 작성자와 확인자는 달라야 함';
+const NOTE_F2 = '※ 작성자는 교과협의회 소속교사, 확인자는 교과협의회 대표교사로 함<br>※ 작성자와 확인자는 달라야 함';
+const NOTE_F3 = '※ 작성자는 교과협의회 대표교사, 확인자는 교감으로 함<br>※ 작성자와 확인자는 달라야 함';
 function sheet2(d) {
   const m = Math.max(7, d.teachers.length), rows = Math.max(13, d.pubs.length);
   const W = [6009, 4311, ...Array(m).fill(24733 / m), 4095, 4095, 3812], T = sum(W);
@@ -1114,7 +1119,7 @@ function sheet2(d) {
       `<td>${d.totals[i]}</td><td>${d.avgs[i]}</td><td>${d.ranks[i] ? d.ranks[i] + '위' : ''}</td>`
       : '<td></td><td></td>' + '<td></td>'.repeat(m) + '<td></td><td></td><td></td>') + '</tr>';
   }
-  h += `</table><div class="sign">${signText(d)}</div><div class="note">${NOTE}</div></div>`;
+  h += `</table><div class="sign">${signText(d)}</div><div class="note">${NOTE_F2}</div></div>`;
   return h;
 }
 function sheet3(d) {
@@ -1127,7 +1132,7 @@ function sheet3(d) {
     h += r ? `<tr><td class="big">${i + 1}</td><td>${nameLines(r.pub)}</td><td>${esc(r.price)}</td><td class="opn">${r.lines.map(esc).join('<br>')}</td></tr>`
       : '<tr><td class="big"></td><td></td><td></td><td></td></tr>';
   }
-  h += `</table><div class="sign">${signText(d, true)}</div><div class="note">${NOTE}</div></div>`;
+  h += `</table><div class="sign">${signText(d, true)}</div><div class="note">${NOTE_F3}</div></div>`;
   return h;
 }
 function sheetFor(k, form) {
